@@ -9,7 +9,6 @@ class InvoiceWorker
   from_queue 'shipment'
 
   def work(message)
-    puts message
     shipment = JSON.parse(message)
     NotificationService.notify(shipment)
     ack!

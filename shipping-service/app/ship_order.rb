@@ -11,13 +11,7 @@ class OrderWorker
   from_queue 'orders'
 
   def work(message)
-    puts message
-    shipment = JSON.parse(message)
-    shipment['status'] = true
-    shipping = Shipping.new(shipment)
-    result   = shipping.save
-    puts result
-    if result
+    if shipment_created?
       puts "#{ shipping.id } created"
       QueueConnection.publish(shipment.to_json)
       puts "#{ shipment } published"
@@ -27,4 +21,12 @@ class OrderWorker
 
     ack!
   end
+
+  def shipment_created?(shipment)
+    shipment = JSON.parse(message)
+    shipment['status'] = true
+    shipping = Shipping.new(shipment)
+    result   = shipping.save
+  end
+
 end
